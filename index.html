@@ -2,265 +2,137 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Factibilidades</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #2c3e50; }
-        .header-info { display: flex; justify-content: space-between; background-color: #e9ecef; padding: 15px; border-radius: 6px; margin-bottom: 25px; font-weight: bold; font-size: 1.1em; color: #2980b9;}
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-        input[type="text"], input[type="date"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
-        textarea { resize: vertical; height: 100px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
-        th { background-color: #f8f9fa; }
-        .btn-add { background-color: #2ecc71; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-add:hover { background-color: #27ae60; }
-        .btn-remove { background-color: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-remove:hover { background-color: #c0392b; }
-        .btn-submit { width: 100%; padding: 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        .btn-submit:hover { background-color: #2980b9; }
-        .info-box { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin-bottom: 20px; font-size: 0.9em; color: #856404; }
-    </style>
-    <!-- Librería para forzar la descarga de archivos -->
+    <title>Generador Informe GUATEL</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; padding: 20px; background: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn-gen { background: #004a99; color: white; width: 100%; padding: 15px; border: none; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 20px; }
+    </style>
 </head>
 <body>
-
 <div class="container">
-    <h2>Sistema de Generación de Factibilidades</h2>
+    <h2>Informe Técnico - GUATEL</h2>
+    <p><strong>Correlativo:</strong> <span id="display-corr">...</span></p>
     
-    <div class="info-box">
-        Ya no necesitas subir ningún archivo. Solo llena los datos y el sistema construirá el documento Word automáticamente.
-    </div>
-
-    <div class="header-info">
-        <span>Nuevo Documento</span>
-        <span id="display-correlativo">Correlativo: Cargando...</span>
-    </div>
-
-    <form id="factibilidad-form">
-        <div style="display: flex; gap: 15px;">
-            <div class="form-group" style="flex: 1;">
-                <label>Tipo de Factibilidad:</label>
-                <select id="tipo_factibilidad" required>
-                    <option value="">Seleccione...</option>
-                    <option value="Técnica">Técnica</option>
-                    <option value="Operativa">Operativa</option>
-                    <option value="Económica">Económica</option>
-                </select>
+    <form id="gen-form">
+        <div class="form-group">
+            <label>Tipo de Factibilidad (Seleccione uno o varios):</label>
+            <div class="checkbox-group" id="lista-tipos">
+                <label><input type="checkbox" value="Internet Corporativo"> Internet Corporativo</label>
+                <label><input type="checkbox" value="Enlace de datos"> Enlace de datos</label>
+                <label><input type="checkbox" value="Enlace de fibra oscura"> Enlace de fibra oscura</label>
+                <label><input type="checkbox" value="Cableado Estructurado"> Cableado Estructurado</label>
+                <label><input type="checkbox" value="Planta Telefónica IP"> Planta Telefónica IP</label>
+                <label><input type="checkbox" value="Línea E1 Dedicada"> Línea E1 Dedicada</label>
+                <label><input type="checkbox" value="Línea SIP Trunking"> Línea SIP Trunking</label>
+                <label><input type="checkbox" value="Aplicaciones de Software"> Aplicaciones de Software</label>
+                <label><input type="checkbox" value="Hosting"> Hosting</label>
+                <label><input type="checkbox" value="Cámaras de Vigilancia"> Cámaras de Vigilancia</label>
+                <label><input type="checkbox" value="Virtualización"> Virtualización</label>
+                <label><input type="checkbox" value="Infraestructura Centro de Datos"> Infraestructura Centro de Datos</label>
+                <label><input type="checkbox" value="Servicio Satelital"> Servicio Satelital</label>
+                <label><input type="checkbox" value="Gestor Documental"> Gestor Documental</label>
+                <label><input type="checkbox" value="Servicio de Arrendamiento"> Servicio de Arrendamiento</label>
+                <label><input type="checkbox" value="Consultoría e Informática"> Consultoría e Informática</label>
+                <label><input type="checkbox" value="Servicios Administrativos"> Servicios Administrativos</label>
+                <label><input type="checkbox" id="chk-otro" value="Otro"> Otro:</label>
             </div>
-            <div class="form-group" style="flex: 1;">
-                <label>Cliente:</label>
-                <input type="text" id="cliente" placeholder="Nombre de la empresa o cliente" required>
-            </div>
+            <input type="text" id="input-otro" style="display:none; margin-top:10px;" placeholder="Especifique el otro servicio...">
         </div>
 
         <div class="form-group">
-            <label>Historial de Acciones</label>
-            <table id="tabla-historial">
-                <thead>
-                    <tr>
-                        <th style="width: 20%;">Fecha</th>
-                        <th style="width: 30%;">Responsable</th>
-                        <th style="width: 40%;">Acción</th>
-                        <th style="width: 10%;">Quitar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="date" class="h-fecha" required></td>
-                        <td><input type="text" class="h-resp" value="Marvin Luna" required></td>
-                        <td><input type="text" class="h-accion" placeholder="Descripción..." required></td>
-                        <td style="text-align: center;"><button type="button" class="btn-remove" onclick="eliminarFila(this)">X</button></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="button" class="btn-add" onclick="agregarFila()">+ Agregar Acción</button>
+            <label>Cliente:</label>
+            <input type="text" id="cliente" required>
         </div>
-
+        <div class="form-group">
+            <label>Escalabilidad:</label>
+            <select id="escalabilidad">
+                <option value="Baja">Baja</option>
+                <option value="Media">Media</option>
+                <option value="Alta">Alta</option>
+                <option value="Urgente">Urgente</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Responsable:</label>
+            <input type="text" id="resp" value="Marvin Luna" required>
+        </div>
         <div class="form-group">
             <label>Conclusiones:</label>
-            <textarea id="conclusiones" placeholder="Detalle las conclusiones de la factibilidad..." required></textarea>
+            <textarea id="conclusiones" rows="5" required></textarea>
         </div>
-
-        <div style="display: flex; gap: 15px;">
-            <div class="form-group" style="flex: 1;">
-                <label>Firma Responsable:</label>
-                <!-- Usamos textarea para permitir múltiples líneas en la firma -->
-                <textarea id="firma_responsable" style="height: 80px;" required>Marvin Leonel Luna Garcia
-Coordinador de Soporte IT</textarea>
-            </div>
-            <div class="form-group" style="flex: 1;">
-                <label>Vo.Bo. (Nombre y Cargo):</label>
-                <textarea id="vobo" style="height: 80px;" placeholder="Nombre del Aprobador
-Cargo" required></textarea>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-submit">Generar y Descargar Documento Word</button>
+        <button type="submit" class="btn-gen">Generar Informe con Formato GUATEL</button>
     </form>
 </div>
 
 <script>
-    // Configurar Correlativo Automático
-    let correlativoActual = localStorage.getItem('correlativo_fact_auto') || 1;
-    const year = new Date().getFullYear();
-    
-    function formatCorrelativo(num) {
-        return "FAC-" + year + "-" + String(num).padStart(4, '0');
-    }
-    
-    let numStr = formatCorrelativo(correlativoActual);
-    document.getElementById('display-correlativo').innerText = "Correlativo: " + numStr;
+    // Mostrar/Ocultar "Otro"
+    document.getElementById('chk-otro').addEventListener('change', function() {
+        document.getElementById('input-otro').style.display = this.checked ? 'block' : 'none';
+    });
 
-    // Funciones de la tabla
-    function agregarFila() {
-        const tbody = document.querySelector('#tabla-historial tbody');
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-            <td><input type="date" class="h-fecha" required></td>
-            <td><input type="text" class="h-resp" value="Marvin Luna" required></td>
-            <td><input type="text" class="h-accion" required></td>
-            <td style="text-align: center;"><button type="button" class="btn-remove" onclick="eliminarFila(this)">X</button></td>
-        `;
-        tbody.appendChild(fila);
-    }
+    let corr = parseInt(localStorage.getItem('corr_guatel') || 995);
+    document.getElementById('display-corr').innerText = String(corr).padStart(3, '0');
 
-    function eliminarFila(btn) {
-        // Asegurar que siempre quede al menos una fila
-        const tbody = document.querySelector('#tabla-historial tbody');
-        if (tbody.children.length > 1) {
-            btn.closest('tr').remove();
-        } else {
-            alert("Debe haber al menos una acción en el historial.");
-        }
-    }
-
-    // Generar Documento Directamente sin Plantilla
-    document.getElementById('factibilidad-form').addEventListener('submit', function(e) {
+    document.getElementById('gen-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Recopilar datos
-        const tipoFact = document.getElementById('tipo_factibilidad').value;
-        const cliente = document.getElementById('cliente').value;
-        const conclusiones = document.getElementById('conclusiones').value.replace(/\n/g, '<br>');
-        const firmaResp = document.getElementById('firma_responsable').value.replace(/\n/g, '<br>');
-        const vobo = document.getElementById('vobo').value.replace(/\n/g, '<br>');
-
-        // Construir filas del historial en formato HTML para Word
-        let historialHTML = '';
-        const filas = document.querySelectorAll('#tabla-historial tbody tr');
-        filas.forEach(fila => {
-            const fechaCruda = fila.querySelector('.h-fecha').value;
-            // Formatear fecha a dd/mm/yyyy
-            const partes = fechaCruda.split('-');
-            const fechaFmt = partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : fechaCruda;
-            
-            const resp = fila.querySelector('.h-resp').value;
-            const acc = fila.querySelector('.h-accion').value;
-            
-            historialHTML += `
-                <tr>
-                    <td style="border: 1px solid black; padding: 8px;">${fechaFmt}</td>
-                    <td style="border: 1px solid black; padding: 8px;">${resp}</td>
-                    <td style="border: 1px solid black; padding: 8px;">${acc}</td>
-                </tr>
-            `;
+        // Recopilar selecciones
+        let seleccionados = [];
+        document.querySelectorAll('#lista-tipos input[type="checkbox"]:checked').forEach(c => {
+            if(c.value === "Otro") {
+                seleccionados.push(document.getElementById('input-otro').value);
+            } else {
+                seleccionados.push(c.value);
+            }
         });
 
-        // Construir la estructura completa del documento Word usando HTML compatible
+        const data = {
+            corr: String(corr).padStart(3, '0'),
+            tipos: seleccionados.join(", "),
+            cliente: document.getElementById('cliente').value,
+            escala: document.getElementById('escalabilidad').value,
+            resp: document.getElementById('resp').value,
+            concl: document.getElementById('conclusiones').value,
+            fecha: new Date().toLocaleDateString('es-GT')
+        };
+
         const docHTML = `
-            <div style="font-family: Arial, sans-serif; color: #000;">
-                <h1 style="text-align: center; font-size: 24pt;">Documento de Factibilidad</h1>
-                <br>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <tr>
-                        <td style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; font-weight: bold; width: 25%;">No. de Correlativo</td>
-                        <td style="border: 1px solid black; padding: 8px; width: 25%;">${numStr}</td>
-                        <td style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; font-weight: bold; width: 25%;">Tipo de Factibilidad</td>
-                        <td style="border: 1px solid black; padding: 8px; width: 25%;">${tipoFact}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; font-weight: bold;">Cliente</td>
-                        <td colspan="3" style="border: 1px solid black; padding: 8px;">${cliente}</td>
-                    </tr>
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'></head>
+            <body style="font-family: Arial, sans-serif; padding: 40px;">
+                <h1 style="text-align: center; font-size: 16pt;">INFORME DE FACTIBILIDAD TÉCNICA</h1>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr><td style="border: 1px solid #000; padding: 5px; width: 30%;"><strong>Correlativo:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.corr}</td></tr>
+                    <tr><td style="border: 1px solid #000; padding: 5px;"><strong>Cliente:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.cliente}</td></tr>
+                    <tr><td style="border: 1px solid #000; padding: 5px;"><strong>Tipo de Servicio:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.tipos}</td></tr>
+                    <tr><td style="border: 1px solid #000; padding: 5px;"><strong>Escalabilidad:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.escala}</td></tr>
                 </table>
-                <br>
-                <h2 style="font-size: 18pt;">Historial de Acciones</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <thead>
-                        <tr>
-                            <th style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; text-align: left;">Fecha</th>
-                            <th style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; text-align: left;">Responsable</th>
-                            <th style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; text-align: left;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${historialHTML}
-                    </tbody>
+                <h2 style="font-size: 14pt; margin-top: 30px;">Historial de Acciones</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><th style="border: 1px solid #000; padding: 5px;">Fecha</th><th style="border: 1px solid #000; padding: 5px;">Responsable</th><th style="border: 1px solid #000; padding: 5px;">Acción</th></tr>
+                    <tr><td style="border: 1px solid #000; padding: 5px;">${data.fecha}</td><td style="border: 1px solid #000; padding: 5px;">${data.resp}</td><td style="border: 1px solid #000; padding: 5px;">Inicio de gestión</td></tr>
                 </table>
-                <br>
-                <h2 style="font-size: 18pt;">Conclusiones</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
-                    <tr>
-                        <td style="border: 1px solid black; padding: 15px; vertical-align: top;">
-                            ${conclusiones}
-                            <br><br><br>
-                        </td>
-                    </tr>
-                </table>
-                <br><br>
-                <table style="width: 100%; border: none; text-align: center; margin-top: 40px;">
-                    <tr>
-                        <td style="padding: 20px; width: 50%; border: none;">
-                            ___________________________________<br>
-                            <b>Firma del Responsable</b><br>
-                            ${firmaResp}
-                        </td>
-                        <td style="padding: 20px; width: 50%; border: none;">
-                            ___________________________________<br>
-                            <b>Vo. Bo.</b><br>
-                            ${vobo}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        `;
+                <h2 style="font-size: 14pt; margin-top: 30px;">Conclusiones</h2>
+                <div style="border: 1px solid #000; padding: 10px; min-height: 80px;">${data.concl}</div>
+                <div style="margin-top: 100px; display: flex; justify-content: space-between;">
+                    <div style="text-align: center;">__________________________<br>Firma Responsable</div>
+                    <div style="text-align: center;">__________________________<br>Vo. Bo.</div>
+                </div>
+            </body></html>`;
 
-        // Encabezados requeridos para que MS Word lo interprete correctamente
-        const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Factibilidad</title></head><body>";
-        const footer = "</body></html>";
-        const sourceHTML = header + docHTML + footer;
-        
-        // Crear el archivo Word
-        const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
-        const fileName = "Factibilidad_" + cliente.replace(/\s+/g, '_') + "_" + numStr + ".doc";
-        
-        // Descargar
-        saveAs(blob, fileName);
+        const blob = new Blob(['\ufeff', docHTML], { type: 'application/msword' });
+        saveAs(blob, "Factibilidad_" + data.corr + ".doc");
 
-        // Actualizar correlativo para el próximo documento
-        correlativoActual++;
-        localStorage.setItem('correlativo_fact_auto', correlativoActual);
-        numStr = formatCorrelativo(correlativoActual);
-        document.getElementById('display-correlativo').innerText = "Correlativo: " + numStr;
-        
-        // Limpiar el formulario excepto firmas (para comodidad)
-        document.getElementById('cliente').value = '';
-        document.getElementById('conclusiones').value = '';
-        document.getElementById('tipo_factibilidad').value = '';
-        const tbody = document.querySelector('#tabla-historial tbody');
-        tbody.innerHTML = `<tr>
-            <td><input type="date" class="h-fecha" required></td>
-            <td><input type="text" class="h-resp" value="Marvin Luna" required></td>
-            <td><input type="text" class="h-accion" required></td>
-            <td style="text-align: center;"><button type="button" class="btn-remove" onclick="eliminarFila(this)">X</button></td>
-        </tr>`;
-        
-        alert("¡El documento Word se ha generado y descargado correctamente!");
+        corr++;
+        if (corr > 999) corr = 1;
+        localStorage.setItem('corr_guatel', corr);
+        location.reload();
     });
 </script>
 </body>
