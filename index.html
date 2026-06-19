@@ -2,99 +2,125 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Generador Informe GUATEL</title>
+    <title>Generador Factibilidad GUATEL</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         body { font-family: 'Arial', sans-serif; padding: 20px; background: #f4f4f9; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .tabs { display: flex; border-bottom: 2px solid #004a99; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: #ddd; margin-right: 5px; border-radius: 5px 5px 0 0; }
+        .tab-btn.active { background: #004a99; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
         .form-group { margin-bottom: 15px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; }
         input[type="text"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn-gen { background: #004a99; color: white; width: 100%; padding: 15px; border: none; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 20px; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; padding: 10px; border: 1px solid #eee; }
+        .btn-gen { background: #2ecc71; color: white; width: 100%; padding: 15px; border: none; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f8f8f8; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>Informe Técnico - GUATEL</h2>
-    <p><strong>Correlativo:</strong> <span id="display-corr">...</span></p>
-    
-    <form id="gen-form">
-        <div class="form-group">
-            <label>Tipo de Factibilidad (Seleccione uno o varios):</label>
-            <div class="checkbox-group" id="lista-tipos">
-                <label><input type="checkbox" value="Internet Corporativo"> Internet Corporativo</label>
-                <label><input type="checkbox" value="Enlace de datos"> Enlace de datos</label>
-                <label><input type="checkbox" value="Enlace de fibra oscura"> Enlace de fibra oscura</label>
-                <label><input type="checkbox" value="Cableado Estructurado"> Cableado Estructurado</label>
-                <label><input type="checkbox" value="Planta Telefónica IP"> Planta Telefónica IP</label>
-                <label><input type="checkbox" value="Línea E1 Dedicada"> Línea E1 Dedicada</label>
-                <label><input type="checkbox" value="Línea SIP Trunking"> Línea SIP Trunking</label>
-                <label><input type="checkbox" value="Aplicaciones de Software"> Aplicaciones de Software</label>
-                <label><input type="checkbox" value="Hosting"> Hosting</label>
-                <label><input type="checkbox" value="Cámaras de Vigilancia"> Cámaras de Vigilancia</label>
-                <label><input type="checkbox" value="Virtualización"> Virtualización</label>
-                <label><input type="checkbox" value="Infraestructura Centro de Datos"> Infraestructura Centro de Datos</label>
-                <label><input type="checkbox" value="Servicio Satelital"> Servicio Satelital</label>
-                <label><input type="checkbox" value="Gestor Documental"> Gestor Documental</label>
-                <label><input type="checkbox" value="Servicio de Arrendamiento"> Servicio de Arrendamiento</label>
-                <label><input type="checkbox" value="Consultoría e Informática"> Consultoría e Informática</label>
-                <label><input type="checkbox" value="Servicios Administrativos"> Servicios Administrativos</label>
-                <label><input type="checkbox" id="chk-otro" value="Otro"> Otro:</label>
-            </div>
-            <input type="text" id="input-otro" style="display:none; margin-top:10px;" placeholder="Especifique el otro servicio...">
-        </div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('generador')">Generador</button>
+        <button class="tab-btn" onclick="showTab('informes')">Historial de Informes</button>
+    </div>
 
-        <div class="form-group">
-            <label>Cliente:</label>
-            <input type="text" id="cliente" required>
+    <div id="generador" class="tab-content active">
+        <h2>Generar Factibilidad GUATEL</h2>
+        <p><strong>Correlativo:</strong> <span id="display-corr" style="color:red; font-weight:bold;">...</span></p>
+        <form id="gen-form">
+            <div class="form-group">
+                <label>Tipo de Factibilidad:</label>
+                <div class="checkbox-group" id="lista-tipos">
+                    <label><input type="checkbox" value="Internet Corporativo"> Internet Corporativo</label>
+                    <label><input type="checkbox" value="Enlace de datos"> Enlace de datos</label>
+                    <label><input type="checkbox" value="Enlace de fibra oscura"> Enlace de fibra oscura</label>
+                    <label><input type="checkbox" value="Cableado Estructurado"> Cableado Estructurado</label>
+                    <label><input type="checkbox" value="Planta Telefónica IP"> Planta Telefónica IP</label>
+                    <label><input type="checkbox" value="Línea E1 Dedicada"> Línea E1 Dedicada</label>
+                    <label><input type="checkbox" value="Línea SIP Trunking"> Línea SIP Trunking</label>
+                    <label><input type="checkbox" value="Aplicaciones de Software"> Aplicaciones de Software</label>
+                    <label><input type="checkbox" value="Hosting"> Hosting</label>
+                    <label><input type="checkbox" value="Cámaras de Vigilancia"> Cámaras de Vigilancia</label>
+                    <label><input type="checkbox" value="Virtualización"> Virtualización</label>
+                    <label><input type="checkbox" value="Infraestructura Centro de Datos"> Infraestructura Centro de Datos</label>
+                    <label><input type="checkbox" value="Servicio Satelital"> Servicio Satelital</label>
+                    <label><input type="checkbox" value="Gestor Documental"> Gestor Documental</label>
+                    <label><input type="checkbox" value="Servicio de Arrendamiento"> Servicio de Arrendamiento</label>
+                    <label><input type="checkbox" value="Asistencia Técnica"> Asistencia Técnica</label>
+                    <label><input type="checkbox" value="Servicios Administrativos"> Servicios Administrativos</label>
+                    <label><input type="checkbox" id="chk-otro" value="Otro"> Otro:</label>
+                </div>
+                <input type="text" id="input-otro" style="display:none; margin-top:10px;" placeholder="Especifique el otro servicio...">
+            </div>
+            <div class="form-group">
+                <label>Cliente:</label>
+                <input type="text" id="cliente" required>
+            </div>
+            <div class="form-group">
+                <label>Escalabilidad:</label>
+                <select id="escalabilidad"><option>Baja</option><option>Media</option><option>Alta</option><option>Urgente</option></select>
+            </div>
+            <div class="form-group">
+                <label>Responsable:</label>
+                <input type="text" id="resp" value="Marvin Luna" required>
+            </div>
+            <div class="form-group">
+                <label>Conclusiones:</label>
+                <textarea id="conclusiones" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn-gen">Generar Documento Word</button>
+        </form>
+    </div>
+
+    <div id="informes" class="tab-content">
+        <h2>Historial de Informes</h2>
+        <table>
+            <thead><tr><th>Correlativo</th><th>Cliente</th><th>Fecha</th><th>Servicios</th></tr></thead>
+            <tbody id="historial-body"></tbody>
+        </table>
+        <div style="margin-top:20px;">
+            <button onclick="exportarHistorial()">Exportar Backup (JSON)</button>
+            <input type="file" id="import-file" style="display:none;" onchange="importarHistorial(this)">
+            <button onclick="document.getElementById('import-file').click()">Importar Backup</button>
         </div>
-        <div class="form-group">
-            <label>Escalabilidad:</label>
-            <select id="escalabilidad">
-                <option value="Baja">Baja</option>
-                <option value="Media">Media</option>
-                <option value="Alta">Alta</option>
-                <option value="Urgente">Urgente</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Responsable:</label>
-            <input type="text" id="resp" value="Marvin Luna" required>
-        </div>
-        <div class="form-group">
-            <label>Conclusiones:</label>
-            <textarea id="conclusiones" rows="5" required></textarea>
-        </div>
-        <button type="submit" class="btn-gen">Generar Informe con Formato GUATEL</button>
-    </form>
+    </div>
 </div>
 
 <script>
-    // Mostrar/Ocultar "Otro"
+    // Lógica Correlativo
+    let corr = parseInt(localStorage.getItem('corr_guatel') || 995);
+    document.getElementById('display-corr').innerText = String(corr).padStart(3, '0');
+
+    // Gestión de Checkbox "Otro"
     document.getElementById('chk-otro').addEventListener('change', function() {
         document.getElementById('input-otro').style.display = this.checked ? 'block' : 'none';
     });
 
-    let corr = parseInt(localStorage.getItem('corr_guatel') || 995);
-    document.getElementById('display-corr').innerText = String(corr).padStart(3, '0');
+    // Gestión de pestañas
+    function showTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tab).classList.add('active');
+        event.currentTarget.classList.add('active');
+        if(tab === 'informes') renderHistorial();
+    }
 
+    // Guardado y Generación
     document.getElementById('gen-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Recopilar selecciones
-        let seleccionados = [];
+        let sel = [];
         document.querySelectorAll('#lista-tipos input[type="checkbox"]:checked').forEach(c => {
-            if(c.value === "Otro") {
-                seleccionados.push(document.getElementById('input-otro').value);
-            } else {
-                seleccionados.push(c.value);
-            }
+            sel.push(c.value === "Otro" ? document.getElementById('input-otro').value : c.value);
         });
 
         const data = {
             corr: String(corr).padStart(3, '0'),
-            tipos: seleccionados.join(", "),
+            tipos: sel.join(", "),
             cliente: document.getElementById('cliente').value,
             escala: document.getElementById('escalabilidad').value,
             resp: document.getElementById('resp').value,
@@ -102,38 +128,59 @@
             fecha: new Date().toLocaleDateString('es-GT')
         };
 
-        const docHTML = `
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head><meta charset='utf-8'></head>
-            <body style="font-family: Arial, sans-serif; padding: 40px;">
-                <h1 style="text-align: center; font-size: 16pt;">INFORME DE FACTIBILIDAD TÉCNICA</h1>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                    <tr><td style="border: 1px solid #000; padding: 5px; width: 30%;"><strong>Correlativo:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.corr}</td></tr>
-                    <tr><td style="border: 1px solid #000; padding: 5px;"><strong>Cliente:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.cliente}</td></tr>
-                    <tr><td style="border: 1px solid #000; padding: 5px;"><strong>Tipo de Servicio:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.tipos}</td></tr>
-                    <tr><td style="border: 1px solid #000; padding: 5px;"><strong>Escalabilidad:</strong></td><td style="border: 1px solid #000; padding: 5px;">${data.escala}</td></tr>
-                </table>
-                <h2 style="font-size: 14pt; margin-top: 30px;">Historial de Acciones</h2>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr><th style="border: 1px solid #000; padding: 5px;">Fecha</th><th style="border: 1px solid #000; padding: 5px;">Responsable</th><th style="border: 1px solid #000; padding: 5px;">Acción</th></tr>
-                    <tr><td style="border: 1px solid #000; padding: 5px;">${data.fecha}</td><td style="border: 1px solid #000; padding: 5px;">${data.resp}</td><td style="border: 1px solid #000; padding: 5px;">Inicio de gestión</td></tr>
-                </table>
-                <h2 style="font-size: 14pt; margin-top: 30px;">Conclusiones</h2>
-                <div style="border: 1px solid #000; padding: 10px; min-height: 80px;">${data.concl}</div>
-                <div style="margin-top: 100px; display: flex; justify-content: space-between;">
-                    <div style="text-align: center;">__________________________<br>Firma Responsable</div>
-                    <div style="text-align: center;">__________________________<br>Vo. Bo.</div>
-                </div>
-            </body></html>`;
+        // Guardar Historial
+        let hist = JSON.parse(localStorage.getItem('historial_data') || '[]');
+        hist.unshift(data);
+        localStorage.setItem('historial_data', JSON.stringify(hist));
+
+        // Generar Documento WORD con formato GUATEL
+        const docHTML = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><body style="font-family: Arial, sans-serif; padding: 40px;">
+            <h1 style="text-align: center; border-bottom: 2px solid #000;">INFORME DE FACTIBILIDAD TÉCNICA</h1>
+            <table style="width:100%; border-collapse:collapse; margin-top:20px;">
+                <tr><td style="border:1px solid #000; padding:10px;"><strong>No. Correlativo:</strong></td><td style="border:1px solid #000; padding:10px;">${data.corr}</td></tr>
+                <tr><td style="border:1px solid #000; padding:10px;"><strong>Cliente:</strong></td><td style="border:1px solid #000; padding:10px;">${data.cliente}</td></tr>
+                <tr><td style="border:1px solid #000; padding:10px;"><strong>Servicios:</strong></td><td style="border:1px solid #000; padding:10px;">${data.tipos}</td></tr>
+                <tr><td style="border:1px solid #000; padding:10px;"><strong>Escalabilidad:</strong></td><td style="border:1px solid #000; padding:10px;">${data.escala}</td></tr>
+            </table>
+            <h2 style="margin-top:30px;">Historial de Acciones</h2>
+            <table style="width:100%; border-collapse:collapse;">
+                <tr><th style="border:1px solid #000; padding:8px;">Fecha</th><th style="border:1px solid #000; padding:8px;">Responsable</th></tr>
+                <tr><td style="border:1px solid #000; padding:8px;">${data.fecha}</td><td style="border:1px solid #000; padding:8px;">${data.resp}</td></tr>
+            </table>
+            <h2 style="margin-top:30px;">Conclusiones</h2>
+            <div style="border:1px solid #000; padding:15px; min-height:100px;">${data.concl}</div>
+            <div style="margin-top:60px; display:flex; justify-content:space-between;">
+                <div style="text-align:center;">__________________________<br>Firma Responsable</div>
+                <div style="text-align:center;">__________________________<br>Vo. Bo.</div>
+            </div></body></html>`;
 
         const blob = new Blob(['\ufeff', docHTML], { type: 'application/msword' });
         saveAs(blob, "Factibilidad_" + data.corr + ".doc");
 
+        // Incrementar correlativo
         corr++;
         if (corr > 999) corr = 1;
         localStorage.setItem('corr_guatel', corr);
+        alert("¡Informe generado!");
         location.reload();
     });
+
+    function renderHistorial() {
+        let hist = JSON.parse(localStorage.getItem('historial_data') || '[]');
+        document.getElementById('historial-body').innerHTML = hist.map(h => `<tr><td>${h.corr}</td><td>${h.cliente}</td><td>${h.fecha}</td><td>${h.tipos}</td></tr>`).join('');
+    }
+
+    function exportarHistorial() {
+        const data = localStorage.getItem('historial_data');
+        const blob = new Blob([data], {type: 'application/json'});
+        saveAs(blob, "Backup_Historial_Guatel.json");
+    }
+
+    function importarHistorial(input) {
+        const reader = new FileReader();
+        reader.onload = (e) => { localStorage.setItem('historial_data', e.target.result); location.reload(); };
+        reader.readAsText(input.files[0]);
+    }
 </script>
 </body>
 </html>
