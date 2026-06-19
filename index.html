@@ -5,200 +5,262 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Factibilidades</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 40px;
-            color: #333;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .header-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #e9ecef;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            font-weight: bold;
-            color: #495057;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="text"], select, input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .note {
-            font-size: 0.9em;
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; }
+        .header-info { display: flex; justify-content: space-between; background-color: #e9ecef; padding: 15px; border-radius: 6px; margin-bottom: 25px; font-weight: bold; font-size: 1.1em; color: #2980b9;}
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="date"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        textarea { resize: vertical; height: 100px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f8f9fa; }
+        .btn-add { background-color: #2ecc71; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-add:hover { background-color: #27ae60; }
+        .btn-remove { background-color: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-remove:hover { background-color: #c0392b; }
+        .btn-submit { width: 100%; padding: 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-submit:hover { background-color: #2980b9; }
+        .info-box { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin-bottom: 20px; font-size: 0.9em; color: #856404; }
     </style>
-    <!-- Librerías necesarias para generar Word -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
-    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
-    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip-utils.js"></script>
+    <!-- Librería para forzar la descarga de archivos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
 
 <div class="container">
-    <h2>Formulario de Factibilidad</h2>
+    <h2>Sistema de Generación de Factibilidades</h2>
     
+    <div class="info-box">
+        Ya no necesitas subir ningún archivo. Solo llena los datos y el sistema construirá el documento Word automáticamente.
+    </div>
+
     <div class="header-info">
-        <span>Documento de Factibilidad</span>
+        <span>Nuevo Documento</span>
         <span id="display-correlativo">Correlativo: Cargando...</span>
     </div>
 
     <form id="factibilidad-form">
-        <div class="form-group">
-            <label for="template-file">1. Sube tu plantilla Word (.docx o .docm) preparada con etiquetas:</label>
-            <input type="file" id="template-file" accept=".docx, .docm" required>
-            <div class="note">Asegúrate de que tu Word tenga escrito {correlativo}, {tipo_factibilidad}, y {cliente}.</div>
+        <div style="display: flex; gap: 15px;">
+            <div class="form-group" style="flex: 1;">
+                <label>Tipo de Factibilidad:</label>
+                <select id="tipo_factibilidad" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Técnica">Técnica</option>
+                    <option value="Operativa">Operativa</option>
+                    <option value="Económica">Económica</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Cliente:</label>
+                <input type="text" id="cliente" placeholder="Nombre de la empresa o cliente" required>
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="tipo_factibilidad">Tipo de Factibilidad:</label>
-            <select id="tipo_factibilidad" required>
-                <option value="">Seleccione una opción</option>
-                <option value="Técnica">Técnica</option>
-                <option value="Operativa">Operativa</option>
-                <option value="Económica">Económica</option>
-            </select>
+            <label>Historial de Acciones</label>
+            <table id="tabla-historial">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Fecha</th>
+                        <th style="width: 30%;">Responsable</th>
+                        <th style="width: 40%;">Acción</th>
+                        <th style="width: 10%;">Quitar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="date" class="h-fecha" required></td>
+                        <td><input type="text" class="h-resp" value="Marvin Luna" required></td>
+                        <td><input type="text" class="h-accion" placeholder="Descripción..." required></td>
+                        <td style="text-align: center;"><button type="button" class="btn-remove" onclick="eliminarFila(this)">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn-add" onclick="agregarFila()">+ Agregar Acción</button>
         </div>
 
         <div class="form-group">
-            <label for="cliente">Nombre del Cliente:</label>
-            <input type="text" id="cliente" placeholder="Ej. Empresa S.A." required>
+            <label>Conclusiones:</label>
+            <textarea id="conclusiones" placeholder="Detalle las conclusiones de la factibilidad..." required></textarea>
         </div>
 
-        <!-- Agrega aquí los "otros datos más" -->
-        <div class="form-group">
-            <label for="otro_dato">Otro Dato Adicional (Ejemplo):</label>
-            <input type="text" id="otro_dato" placeholder="Dato extra para el documento">
+        <div style="display: flex; gap: 15px;">
+            <div class="form-group" style="flex: 1;">
+                <label>Firma Responsable:</label>
+                <!-- Usamos textarea para permitir múltiples líneas en la firma -->
+                <textarea id="firma_responsable" style="height: 80px;" required>Marvin Leonel Luna Garcia
+Coordinador de Soporte IT</textarea>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Vo.Bo. (Nombre y Cargo):</label>
+                <textarea id="vobo" style="height: 80px;" placeholder="Nombre del Aprobador
+Cargo" required></textarea>
+            </div>
         </div>
 
-        <button type="submit">Generar Documento Word</button>
+        <button type="submit" class="btn-submit">Generar y Descargar Documento Word</button>
     </form>
 </div>
 
 <script>
-    // Manejo del Correlativo Automático (Ejemplo con LocalStorage)
-    // Para un entorno multiusuario, esto se puede reemplazar con una llamada a Firebase Firestore/Realtime Database.
-    let correlativoActual = localStorage.getItem('correlativo_factibilidad');
-    if (!correlativoActual) {
-        correlativoActual = 1;
-    } else {
-        correlativoActual = parseInt(correlativoActual);
+    // Configurar Correlativo Automático
+    let correlativoActual = localStorage.getItem('correlativo_fact_auto') || 1;
+    const year = new Date().getFullYear();
+    
+    function formatCorrelativo(num) {
+        return "FAC-" + year + "-" + String(num).padStart(4, '0');
     }
     
-    // Formatear correlativo (Ej: FAC-2026-0001)
-    const year = new Date().getFullYear();
-    let numeroFormateado = "FAC-" + year + "-" + String(correlativoActual).padStart(4, '0');
-    document.getElementById('display-correlativo').innerText = "Correlativo: " + numeroFormateado;
+    let numStr = formatCorrelativo(correlativoActual);
+    document.getElementById('display-correlativo').innerText = "Correlativo: " + numStr;
 
-    document.getElementById('factibilidad-form').addEventListener('submit', function(event) {
-        event.preventDefault();
+    // Funciones de la tabla
+    function agregarFila() {
+        const tbody = document.querySelector('#tabla-historial tbody');
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td><input type="date" class="h-fecha" required></td>
+            <td><input type="text" class="h-resp" value="Marvin Luna" required></td>
+            <td><input type="text" class="h-accion" required></td>
+            <td style="text-align: center;"><button type="button" class="btn-remove" onclick="eliminarFila(this)">X</button></td>
+        `;
+        tbody.appendChild(fila);
+    }
 
-        const fileInput = document.getElementById('template-file');
-        if (fileInput.files.length === 0) {
-            alert("Por favor sube la plantilla de Word primero.");
-            return;
+    function eliminarFila(btn) {
+        // Asegurar que siempre quede al menos una fila
+        const tbody = document.querySelector('#tabla-historial tbody');
+        if (tbody.children.length > 1) {
+            btn.closest('tr').remove();
+        } else {
+            alert("Debe haber al menos una acción en el historial.");
         }
+    }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const content = e.target.result;
+    // Generar Documento Directamente sin Plantilla
+    document.getElementById('factibilidad-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Recopilar datos
+        const tipoFact = document.getElementById('tipo_factibilidad').value;
+        const cliente = document.getElementById('cliente').value;
+        const conclusiones = document.getElementById('conclusiones').value.replace(/\n/g, '<br>');
+        const firmaResp = document.getElementById('firma_responsable').value.replace(/\n/g, '<br>');
+        const vobo = document.getElementById('vobo').value.replace(/\n/g, '<br>');
+
+        // Construir filas del historial en formato HTML para Word
+        let historialHTML = '';
+        const filas = document.querySelectorAll('#tabla-historial tbody tr');
+        filas.forEach(fila => {
+            const fechaCruda = fila.querySelector('.h-fecha').value;
+            // Formatear fecha a dd/mm/yyyy
+            const partes = fechaCruda.split('-');
+            const fechaFmt = partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : fechaCruda;
             
-            try {
-                // Iniciar PizZip con el contenido del archivo
-                const zip = new PizZip(content);
-                const doc = new window.docxtemplater(zip, {
-                    paragraphLoop: true,
-                    linebreaks: true,
-                });
+            const resp = fila.querySelector('.h-resp').value;
+            const acc = fila.querySelector('.h-accion').value;
+            
+            historialHTML += `
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px;">${fechaFmt}</td>
+                    <td style="border: 1px solid black; padding: 8px;">${resp}</td>
+                    <td style="border: 1px solid black; padding: 8px;">${acc}</td>
+                </tr>
+            `;
+        });
 
-                // Recolectar datos del formulario
-                const tipoFactibilidad = document.getElementById('tipo_factibilidad').value;
-                const cliente = document.getElementById('cliente').value;
-                const otroDato = document.getElementById('otro_dato').value;
+        // Construir la estructura completa del documento Word usando HTML compatible
+        const docHTML = `
+            <div style="font-family: Arial, sans-serif; color: #000;">
+                <h1 style="text-align: center; font-size: 24pt;">Documento de Factibilidad</h1>
+                <br>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; font-weight: bold; width: 25%;">No. de Correlativo</td>
+                        <td style="border: 1px solid black; padding: 8px; width: 25%;">${numStr}</td>
+                        <td style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; font-weight: bold; width: 25%;">Tipo de Factibilidad</td>
+                        <td style="border: 1px solid black; padding: 8px; width: 25%;">${tipoFact}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; font-weight: bold;">Cliente</td>
+                        <td colspan="3" style="border: 1px solid black; padding: 8px;">${cliente}</td>
+                    </tr>
+                </table>
+                <br>
+                <h2 style="font-size: 18pt;">Historial de Acciones</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; text-align: left;">Fecha</th>
+                            <th style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; text-align: left;">Responsable</th>
+                            <th style="border: 1px solid black; padding: 8px; background-color: #ecf0f1; text-align: left;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${historialHTML}
+                    </tbody>
+                </table>
+                <br>
+                <h2 style="font-size: 18pt;">Conclusiones</h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                    <tr>
+                        <td style="border: 1px solid black; padding: 15px; vertical-align: top;">
+                            ${conclusiones}
+                            <br><br><br>
+                        </td>
+                    </tr>
+                </table>
+                <br><br>
+                <table style="width: 100%; border: none; text-align: center; margin-top: 40px;">
+                    <tr>
+                        <td style="padding: 20px; width: 50%; border: none;">
+                            ___________________________________<br>
+                            <b>Firma del Responsable</b><br>
+                            ${firmaResp}
+                        </td>
+                        <td style="padding: 20px; width: 50%; border: none;">
+                            ___________________________________<br>
+                            <b>Vo. Bo.</b><br>
+                            ${vobo}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        `;
 
-                // Renderizar el documento reemplazando las etiquetas
-                doc.render({
-                    correlativo: numeroFormateado,
-                    tipo_factibilidad: tipoFactibilidad,
-                    cliente: cliente,
-                    otro_dato: otroDato
-                });
+        // Encabezados requeridos para que MS Word lo interprete correctamente
+        const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Factibilidad</title></head><body>";
+        const footer = "</body></html>";
+        const sourceHTML = header + docHTML + footer;
+        
+        // Crear el archivo Word
+        const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+        const fileName = "Factibilidad_" + cliente.replace(/\s+/g, '_') + "_" + numStr + ".doc";
+        
+        // Descargar
+        saveAs(blob, fileName);
 
-                // Generar el archivo final
-                const out = doc.getZip().generate({
-                    type: "blob",
-                    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                });
-                
-                // Guardar el documento generado con el nombre del cliente y correlativo
-                saveAs(out, "Factibilidad_" + cliente.replace(/\s+/g, '_') + "_" + numeroFormateado + ".docx");
-
-                // Aumentar el correlativo para el siguiente formulario
-                correlativoActual++;
-                localStorage.setItem('correlativo_factibilidad', correlativoActual);
-                
-                // Actualizar la vista
-                numeroFormateado = "FAC-" + year + "-" + String(correlativoActual).padStart(4, '0');
-                document.getElementById('display-correlativo').innerText = "Correlativo: " + numeroFormateado;
-                
-                alert("¡Documento generado con éxito!");
-                document.getElementById('factibilidad-form').reset();
-
-            } catch (error) {
-                console.error(error);
-                alert("Hubo un error al generar el documento. Asegúrate de que las etiquetas en el Word sean correctas.");
-            }
-        };
-
-        // Leer el archivo subido como binario
-        reader.readAsBinaryString(fileInput.files[0]);
+        // Actualizar correlativo para el próximo documento
+        correlativoActual++;
+        localStorage.setItem('correlativo_fact_auto', correlativoActual);
+        numStr = formatCorrelativo(correlativoActual);
+        document.getElementById('display-correlativo').innerText = "Correlativo: " + numStr;
+        
+        // Limpiar el formulario excepto firmas (para comodidad)
+        document.getElementById('cliente').value = '';
+        document.getElementById('conclusiones').value = '';
+        document.getElementById('tipo_factibilidad').value = '';
+        const tbody = document.querySelector('#tabla-historial tbody');
+        tbody.innerHTML = `<tr>
+            <td><input type="date" class="h-fecha" required></td>
+            <td><input type="text" class="h-resp" value="Marvin Luna" required></td>
+            <td><input type="text" class="h-accion" required></td>
+            <td style="text-align: center;"><button type="button" class="btn-remove" onclick="eliminarFila(this)">X</button></td>
+        </tr>`;
+        
+        alert("¡El documento Word se ha generado y descargado correctamente!");
     });
 </script>
 </body>
