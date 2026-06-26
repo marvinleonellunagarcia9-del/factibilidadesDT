@@ -104,36 +104,66 @@
     document.getElementById('gen-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Obtener el último de la nube para el correlativo
-        const query = await db.collection("factibilidades").orderBy("corr", "desc").limit(1).get();
-        let nuevoCorr = 995;
-        if(!query.empty) {
-            let ultimo = parseInt(query.docs[0].data().corr);
-            nuevoCorr = (ultimo >= 999) ? 1 : ultimo + 1;
+        // Deshabilitar botón para evitar doble clic
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        btn.innerText = "Generando y guardando...";
+
+        try {
+            // Obtener el último correlativo
+            const query = await db.collection("factibilidades").orderBy("corr", "desc").limit(1).get();
+            let nuevoCorr = 995;
+            if(!query.empty) {
+                let ultimo = parseInt(query.docs[0].data().corr);
+                nuevoCorr = (ultimo >= 999) ? 1 : ultimo + 1;
+            }
+
+            let sel = [];
+            document.querySelectorAll('#lista-tipos input[type="checkbox"]:checked').forEach(c => {
+                sel.push(c.value === "Otro" ? document.getElementById('input-otro').value : c.value);
+            });
+
+            const data = {
+                corr: String(nuevoCorr).padStart(3, '0'),
+                tipos: sel.join(", "),
+                cliente: document.getElementById('cliente').value,
+                escala: document.getElementById('escalabilidad').value,
+                resp: document.getElementById('resp').value,
+                concl: document.getElementById('conclusiones').value,
+                fecha: new Date().toLocaleDateString('es-GT'),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Guardar en la nube
+            await db.collection("factibilidades").add(data);
+
+            // Generar WORD
+            const docHTML = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <body style="font-family: Arial, sans-serif; padding: 40px;">
+                <h1 style="text-align: center; border-bottom: 2px solid #000;">INFORME DE FACTIBILIDAD TÉCNICA</h1>
+                <table style="width:100%; border-collapse:collapse; margin-top:20px;">
+                    <tr><td style="border:1px solid #000; padding:10px;"><strong>No. Correlativo:</strong></td><td style="border:1px solid #000; padding:10px;">${data.corr}</td></tr>
+                    <tr><td style="border:1px solid #000; padding:10px;"><strong>Cliente:</strong></td><td style="border:1px solid #000; padding:10px;">${data.cliente}</td></tr>
+                    <tr><td style="border:1px solid #000; padding:10px;"><strong>Servicios:</strong></td><td style="border:1px solid #000; padding:10px;">${data.tipos}</td></tr>
+                    <tr><td style="border:1px solid #000; padding:10px;"><strong>Escalabilidad:</strong></td><td style="border:1px solid #000; padding:10px;">${data.escala}</td></tr>
+                </table>
+                <h2 style="margin-top:30px;">Conclusiones</h2>
+                <div style="border:1px solid #000; padding:15px; min-height:100px;">${data.concl}</div>
+            </body></html>`;
+
+            const blob = new Blob(['\ufeff', docHTML], { type: 'application/msword' });
+            saveAs(blob, "Factibilidad_" + data.corr + ".doc");
+            
+            // Limpiar formulario y restaurar botón
+            document.getElementById('gen-form').reset();
+            btn.disabled = false;
+            btn.innerText = "Generar Documento y Guardar en Nube";
+            alert("¡Informe generado y sincronizado con éxito!");
+
+        } catch (error) {
+            console.error(error);
+            alert("Error al guardar: " + error.message);
+            btn.disabled = false;
+            btn.innerText = "Generar Documento y Guardar en Nube";
         }
-
-        let sel = [];
-        document.querySelectorAll('#lista-tipos input[type="checkbox"]:checked').forEach(c => {
-            sel.push(c.value === "Otro" ? document.getElementById('input-otro').value : c.value);
-        });
-
-        const data = {
-            corr: String(nuevoCorr).padStart(3, '0'),
-            tipos: sel.join(", "),
-            cliente: document.getElementById('cliente').value,
-            escala: document.getElementById('escalabilidad').value,
-            resp: document.getElementById('resp').value,
-            concl: document.getElementById('conclusiones').value,
-            fecha: new Date().toLocaleDateString('es-GT'),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        // Guardar en Firebase
-        await db.collection("factibilidades").add(data);
-
-        // Word (Formato Guatel)
-        const docHTML = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <body style="font-family: Arial, sans-serif; padding: 40px;">
-            <h1 style="text-align: center; border-bottom: 2px solid #000;">INFORME DE FACTIBILIDAD TÉCNICA</h1>
-            <table style="width:100%; border-collapse:collapse; margin-top:20px;">
-                <tr><td style="border:1px solid #000; padding:10px;"><strong>No. Correl
+    });
